@@ -23,9 +23,8 @@ int main(void) {
     uint8_t cap = 40;
     int8_t direction = 1;
     int8_t hold = -1;
-    /*set_sleep_mode(SLEEP_MODE_IDLE);*/
-    /*set_sleep_mode(SLEEP_MODE_PWR_DOWN);*/
-    /*PORTB = 0xff;*/
+    set_sleep_mode(SLEEP_MODE_IDLE);
+    PORTB = 0xff;
     DDRB |= (1 << PB1);
     TCCR0B |= (1<<CS01);
     TCCR0A |= (1 << WGM01) | (1 << WGM00);
@@ -47,7 +46,6 @@ int main(void) {
             occount = 0;
             sei();
         }
-        _delay_ms(1);
-        /*sleep_mode();*/
+        sleep_mode();
     }
 }
