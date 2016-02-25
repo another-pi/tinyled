@@ -1,6 +1,5 @@
-#define F_CPU 480000
+// #define F_CPU 480000 // already defined in makefile
 
-#include <util/delay.h>
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
 
@@ -20,23 +19,23 @@ ISR(TIM0_OVF_vect) {
 }
 
 int main(void) {
-    uint8_t power = 0xff;
-    uint8_t cap = 40;
-    int8_t direction = 1;
-    int8_t hold = -1;
+    uint8_t power = 0xff; // inital state of pwm leds = dark
+    uint8_t cap = 40; // initial updimming speed = moderate
+    int8_t direction = 1; // inital dimming direction = up
+    int8_t hold = -1; // (weird math) skip two sequential /\ phases, invert to skip \/
     occount = 0;
 
-    set_sleep_mode(SLEEP_MODE_IDLE);
+    set_sleep_mode(SLEEP_MODE_IDLE);  // only disable cpu and flash clk while sleeping
     PORTB = 0xff;  // enable pullup resistors for powersaving
     DDRB |= (1 << PB1);  // set pwm port as output
-    TCCR0B |= (1<<CS01);  // timer prescaler == 8
+    TCCR0B |= (1 << CS01);  // timer prescaler == 8
     TCCR0A |= (1 << WGM01) | (1 << WGM00); // set pwm to fast_pwm mode
     TCCR0A |= (1 << COM0B1) | (1 << COM0B0); // set pwm to inverting mode
     TIMSK0 |= (1 << TOIE0); // enable timer interrupt
-    ADCSRA &= ~(1<<ADEN);  //disable ADC
+    ADCSRA &= ~(1 << ADEN);  //disable ADC
     
-    while (PINB & (1<<PB3)) {
-        ++s;  // increment s until button is pressed
+    while (PINB & (1 << PB3)) {
+        ++s;  // increment s until button is pressed()
     }
     
     sei();
@@ -50,7 +49,7 @@ int main(void) {
             }
             power += direction;
             if (hold == 1)
-                OCR0B = power;
+                OCR0B = power; // do not update pwm every two continious phases
             occount = 0;
             sei();
         }
