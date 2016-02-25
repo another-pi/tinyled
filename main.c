@@ -4,8 +4,9 @@
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
 
-uint8_t occount = 0;
-static uint8_t s=0xaa,a=0;
+register uint8_t occount asm("r2");
+register uint8_t s asm("r3");
+register uint8_t a asm("r4");
 
 static uint8_t rnd(void) {
     s^=s<<3;
@@ -23,6 +24,7 @@ int main(void) {
     uint8_t cap = 40;
     int8_t direction = 1;
     int8_t hold = -1;
+    occount = 0;
     set_sleep_mode(SLEEP_MODE_IDLE);
     PORTB = 0xff;  // enable pullup resistors for powersaving
     DDRB |= (1 << PB1);  // set pwm port as output
