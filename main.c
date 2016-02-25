@@ -5,9 +5,9 @@
 #include <avr/sleep.h>
 
 uint8_t occount = 0;
+static uint8_t s=0xaa,a=0;
 
 static uint8_t rnd(void) {
-    static uint8_t s=0xaa,a=0;
     s^=s<<3;
     s^=s>>5;
     s^=a++>>2;
@@ -31,6 +31,9 @@ int main(void) {
     TCCR0A |= (1 << COM0B1) | (1 << COM0B0);
     TIMSK0 |= (1 << TOIE0);
     ADCSRA &= ~(1<<ADEN);
+    while (PINB & (1<<PB3)) {
+        ++s;
+    }
     sei();
     while(1) {
         if (occount >= cap) {
