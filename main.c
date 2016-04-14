@@ -2,6 +2,7 @@
 
 #include <avr/interrupt.h>
 #include <avr/sleep.h>
+#include "TinyTouchLib.h"
 
 register uint8_t occount asm("r2");
 register uint8_t s asm("r3"); // lcg var
@@ -33,8 +34,10 @@ int main(void) {
     TCCR0A |= (1 << COM0B1) | (1 << COM0B0); // set pwm to inverting mode
     TIMSK0 |= (1 << TOIE0); // enable timer interrupt
     ADCSRA &= ~(1 << ADEN);  //disable ADC
+
+    tinytouch_init();
     
-    while (PINB & (1 << PB3)) {
+    while (tinytouch_sense() != tt_push) {
         ++s;  // increment s until button is pressed()
     }
     
