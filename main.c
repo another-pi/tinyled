@@ -33,13 +33,14 @@ int main(void) {
     TCCR0A |= (1 << WGM01) | (1 << WGM00); // set pwm to fast_pwm mode
     TCCR0A |= (1 << COM0B1) | (1 << COM0B0); // set pwm to inverting mode
     TIMSK0 |= (1 << TOIE0); // enable timer interrupt
-    ADCSRA &= ~(1 << ADEN);  //disable ADC
 
     tinytouch_init();
     
     while (tinytouch_sense() != tt_push) {
         ++s;  // increment s until button is pressed()
     }
+
+    ADCSRA &= ~(1 << ADEN);  //disable ADC
     
     sei();
     while(1) {
